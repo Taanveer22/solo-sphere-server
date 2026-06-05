@@ -30,9 +30,11 @@ async function run() {
   try {
     // await client.connect();
     console.log('connect client to server');
+
     // =======================================================================
     const db = client.db('soloSphereDB');
     const jobsCollection = db.collection('jobsColl');
+    const bidsCollection = db.collection('bidsColl');
 
     // =======================================================================
     app.get('/jobs', async (req, res) => {
@@ -53,6 +55,12 @@ async function run() {
       res.send(result);
     });
 
+    // =======================================================================
+    app.post('/bids', async (req, res) => {
+      const doc = req.body;
+      const result = await bidsCollection.insertOne(doc);
+      res.send(result);
+    });
     // =======================================================================
     // await client.db('admin').command({ ping: 1 });
     console.log('Send a ping to confirm a successful connection');
