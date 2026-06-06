@@ -49,6 +49,12 @@ async function run() {
       res.send(result);
     });
 
+    app.get('/jobs/buyer/:email', async (req, res) => {
+      const query = { 'buyer.email': req.params.email };
+      const result = await jobsCollection.find(query).toArray();
+      res.send(result);
+    });
+
     app.post('/jobs', async (req, res) => {
       const doc = req.body;
       const result = await jobsCollection.insertOne(doc);
@@ -56,7 +62,7 @@ async function run() {
     });
 
     // =======================================================================
-    app.get('/bids/:email', async (req, res) => {
+    app.get('/bids/freelancer/:email', async (req, res) => {
       const query = { freelancerEmail: req.params.email };
       const result = await bidsCollection.find(query).toArray();
       res.send(result);
