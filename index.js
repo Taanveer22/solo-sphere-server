@@ -61,6 +61,12 @@ async function run() {
       res.send(result);
     });
 
+    app.delete('/jobs/buyer/:id', async (req, res) => {
+      const query = { _id: new ObjectId(req.params.id) };
+      const result = await jobsCollection.deleteOne(query);
+      res.send(result);
+    });
+
     // =======================================================================
     app.get('/bids/freelancer/:email', async (req, res) => {
       const query = { freelancerEmail: req.params.email };
