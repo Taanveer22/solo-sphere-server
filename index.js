@@ -49,7 +49,7 @@ async function run() {
       res.send(result);
     });
 
-    app.get('/jobs/buyer/:email', async (req, res) => {
+    app.get('/jobs/table/:email', async (req, res) => {
       const query = { 'buyer.email': req.params.email };
       const result = await jobsCollection.find(query).toArray();
       res.send(result);
@@ -61,7 +61,7 @@ async function run() {
       res.send(result);
     });
 
-    app.put('/jobs/buyer/:id', async (req, res) => {
+    app.put('/jobs/table/:id', async (req, res) => {
       const jobData = req.body;
       const query = { _id: new ObjectId(req.params.id) };
       const updateDoc = {
@@ -74,14 +74,14 @@ async function run() {
       res.send(result);
     });
 
-    app.delete('/jobs/buyer/:id', async (req, res) => {
+    app.delete('/jobs/table/:id', async (req, res) => {
       const query = { _id: new ObjectId(req.params.id) };
       const result = await jobsCollection.deleteOne(query);
       res.send(result);
     });
 
     // =======================================================================
-    app.get('/bids/freelancer/:email', async (req, res) => {
+    app.get('/bids/table/:email', async (req, res) => {
       const query = { freelancerEmail: req.params.email };
       const result = await bidsCollection.find(query).toArray();
       res.send(result);
@@ -90,6 +90,12 @@ async function run() {
     app.post('/bids', async (req, res) => {
       const doc = req.body;
       const result = await bidsCollection.insertOne(doc);
+      res.send(result);
+    });
+
+    app.delete('/bids/table/:id', async (req, res) => {
+      const query = { _id: new ObjectId(req.params.id) };
+      const result = await bidsCollection.deleteOne(query);
       res.send(result);
     });
     // =======================================================================
