@@ -87,6 +87,12 @@ async function run() {
       res.send(result);
     });
 
+    app.get('/bids/dashboard/:email', async (req, res) => {
+      const query = { buyerEmail: req.params.email };
+      const result = await bidsCollection.find(query).toArray();
+      res.send(result);
+    });
+
     app.post('/bids', async (req, res) => {
       const doc = req.body;
       const result = await bidsCollection.insertOne(doc);
