@@ -99,6 +99,15 @@ async function run() {
       res.send(result);
     });
 
+    app.patch('/bids/dashboard/:id', async (req, res) => {
+      const query = { _id: new ObjectId(req.params.id) };
+      const updateDoc = {
+        $set: { status: req.body.status }, // ✅ descriptive clear key
+      };
+      const result = await bidsCollection.updateOne(query, updateDoc);
+      res.send(result);
+    });
+
     app.delete('/bids/table/:id', async (req, res) => {
       const query = { _id: new ObjectId(req.params.id) };
       const result = await bidsCollection.deleteOne(query);
