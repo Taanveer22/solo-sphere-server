@@ -54,6 +54,18 @@ async function run() {
         })
         .send({ success: true });
     });
+
+    app.get('/jwt/logout', (req, res) => {
+      res
+        .clearCookie('token', {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production' ? true : false,
+          sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+          maxAge: 0,
+        })
+        .send({ success: true });
+    });
+
     // =======================================================================
     app.get('/jobs', async (req, res) => {
       const cursor = jobsCollection.find();
