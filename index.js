@@ -2,10 +2,14 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
 
+// instance
 const port = process.env.PORT || 5000;
 const app = express();
 
+// middlewars
 app.use(
   cors({
     origin: ['http://localhost:5173'],
@@ -36,6 +40,20 @@ async function run() {
     const jobsCollection = db.collection('jobsColl');
     const bidsCollection = db.collection('bidsColl');
 
+    // =======================================================================
+    app.post('/jwt/login', (req, res) => {
+      const payload = req.body;
+      const token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: '7d',
+      });
+      res
+        .cookie('token', token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production' ? true : false,
+          sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+        })
+        .send({ success: true });
+    });
     // =======================================================================
     app.get('/jobs', async (req, res) => {
       const cursor = jobsCollection.find();
