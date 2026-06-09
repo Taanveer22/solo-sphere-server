@@ -18,6 +18,24 @@ app.use(
   })
 );
 app.use(express.json());
+app.use(cookieParser());
+
+const verifyJwt = (req, res, next) => {
+  const token = req?.cookies?.token;
+  console.log(token);
+  if (!token) {
+    return res.status(401).send({ message: 'unauthorized access' });
+  }
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (error, decoded) => {
+    if (error) {
+      // console.log(error);
+      return res.status(403).send({ message: 'forbidden access' });
+    }
+    console.log(decoded);
+    req.decodedPayload = decoded;
+    next();
+  });
+};
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.89rnkti.mongodb.net/?appName=Cluster0`;
 // console.log(uri);
@@ -79,7 +97,10 @@ async function run() {
       res.send(result);
     });
 
-    app.get('/jobs/table/:email', async (req, res) => {
+    app.get('/jobs/table/:email', verifyJwt, async (req, res) => {
+      if (req?.decodedPayload?.email !== req?.params?.email) {
+        return res.status(401).send({ message: 'forbidden acess' });
+      }
       const query = { 'buyer.email': req.params.email };
       const result = await jobsCollection.find(query).toArray();
       res.send(result);
@@ -111,13 +132,19 @@ async function run() {
     });
 
     // =======================================================================
-    app.get('/bids/table/:email', async (req, res) => {
+    app.get('/bids/table/:email', verifyJwt, async (req, res) => {
+      if (req?.decodedPayload?.email !== req.params.email) {
+        return res.status(403).send({ message: 'forbidden access' });
+      }
       const query = { freelancerEmail: req.params.email };
       const result = await bidsCollection.find(query).toArray();
       res.send(result);
     });
 
-    app.get('/bids/dashboard/:email', async (req, res) => {
+    app.get('/bids/dashboard/:email', verifyJwt, async (req, res) => {
+      if (req?.decodedPayload?.email !== req.params.email) {
+        return res.status(403).send({ message: 'forbidden access' });
+      }
       const query = { buyerEmail: req.params.email };
       const result = await bidsCollection.find(query).toArray();
       res.send(result);
