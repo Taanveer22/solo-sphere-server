@@ -151,6 +151,15 @@ async function run() {
     });
 
     app.post('/bids', async (req, res) => {
+      const query = {
+        freelancerEmail: req.body.freelancerEmail,
+        jobId: req.body.jobId,
+      };
+      const alreadyApplied = await bidsCollection.findOne(query);
+      console.log(alreadyApplied);
+      if (alreadyApplied) {
+        return res.status(400).send({ message: 'You have already placed this bid' });
+      }
       const doc = req.body;
       const result = await bidsCollection.insertOne(doc);
       res.send(result);
