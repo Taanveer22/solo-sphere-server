@@ -12,7 +12,11 @@ const app = express();
 // middlewars
 app.use(
   cors({
-    origin: ['http://localhost:5173'],
+    origin: [
+      'http://localhost:5173',
+      'https://solo-sphere-87a94.web.app',
+      'https://solo-sphere-87a94.firebaseapp.com',
+    ],
     credentials: true,
     optionsSuccessStatus: 200,
   })
