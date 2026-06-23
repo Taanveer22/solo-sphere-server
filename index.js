@@ -85,6 +85,32 @@ async function run() {
     });
 
     // =======================================================================
+    app.get('/paginationJobs', async (req, res) => {
+      const page = parseInt(req.query.page);
+      const size = parseInt(req.query.size);
+      const filter = req.query.filter;
+      console.log('page', page);
+      console.log('size', size);
+      console.log('filter', filter);
+
+      let query = {};
+      if (filter) {
+        query = { category: filter };
+      }
+      console.log(query);
+
+      const jobsData = await jobsCollection
+        .find(query)
+        .skip(page * size)
+        .limit(size)
+        .toArray();
+
+      const jobsDataCount = await jobsCollection.countDocuments(query);
+
+      res.send({ jobsData, jobsDataCount });
+    });
+
+    // =======================================================================
     app.get('/jobs', async (req, res) => {
       const cursor = jobsCollection.find();
       const result = await cursor.toArray();
@@ -179,22 +205,7 @@ async function run() {
       const result = await bidsCollection.deleteOne(query);
       res.send(result);
     });
-    // =======================================================================
-    app.get('/paginationJobs', async (req, res) => {
-      const page = parseInt(req.query.page);
-      const size = parseInt(req.query.size);
-      console.log('page', page);
-      console.log('size', size);
 
-      const jobsData = await jobsCollection
-        .find()
-        .skip(page * size)
-        .limit(size)
-        .toArray();
-      const jobsDataCount = await jobsCollection.countDocuments();
-
-      res.send({ jobsData, jobsDataCount });
-    });
     // =======================================================================
     // await client.db('admin').command({ ping: 1 });
     console.log('Send a ping to confirm a successful connection');
