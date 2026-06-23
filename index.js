@@ -180,6 +180,14 @@ async function run() {
       res.send(result);
     });
     // =======================================================================
+    app.get('/paginationJobs', async (req, res) => {
+      const jobsData = await jobsCollection.find().toArray();
+
+      const jobsDataCount = await jobsCollection.countDocuments();
+
+      res.send({ jobsData, jobsDataCount });
+    });
+    // =======================================================================
     // await client.db('admin').command({ ping: 1 });
     console.log('Send a ping to confirm a successful connection');
   } finally {
