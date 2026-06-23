@@ -87,18 +87,22 @@ async function run() {
     // =======================================================================
     app.get('/paginationJobs', async (req, res) => {
       const page = parseInt(req.query.page) || 0;
-      const size = parseInt(req.query.size) || 5;
+      const size = parseInt(req.query.size) || 3;
       const filter = req.query.filter;
       const sort = req.query.sort;
+      const search = req.query.search;
       console.log(req.query);
 
       let query = {};
-      if (filter) {
-        query = { category: filter };
-      }
+
+      if (filter) query.category = filter;
       console.log(query);
 
+      if (search) query.jobTitle = { $regex: search, $options: 'i' };
+      console.log(search);
+
       let sortOptions = {};
+
       if (sort === 'asc') {
         sortOptions = { deadline: 1 };
       } else if (sort === 'dsc') {
