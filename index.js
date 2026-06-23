@@ -54,8 +54,9 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    // await client.connect();
-    console.log('connect client to server');
+    await client.connect();
+    await client.db('admin').command({ ping: 1 });
+    console.log('✅ Successfully connected to MongoDB');
 
     // =======================================================================
     const db = client.db('soloSphereDB');
@@ -222,9 +223,8 @@ async function run() {
       res.send(result);
     });
 
-    // =======================================================================
-    // await client.db('admin').command({ ping: 1 });
-    console.log('Send a ping to confirm a successful connection');
+    // once the DB is connected and every route above is registered.
+    app.listen(port, '0.0.0.0', () => console.log(`Server running on port ${port}`));
   } finally {
     // await client.close();
     console.log('Ensures that the client will close when you finish/error');
@@ -235,5 +235,3 @@ run().catch(console.dir);
 app.get('/', (req, res) => {
   res.send('Hello from SoloSphere Server....');
 });
-
-app.listen(port, () => console.log(`Server running on port ${port}`));
