@@ -181,8 +181,16 @@ async function run() {
     });
     // =======================================================================
     app.get('/paginationJobs', async (req, res) => {
-      const jobsData = await jobsCollection.find().toArray();
+      const page = parseInt(req.query.page);
+      const size = parseInt(req.query.size);
+      console.log('page', page);
+      console.log('size', size);
 
+      const jobsData = await jobsCollection
+        .find()
+        .skip(page * size)
+        .limit(size)
+        .toArray();
       const jobsDataCount = await jobsCollection.countDocuments();
 
       res.send({ jobsData, jobsDataCount });
